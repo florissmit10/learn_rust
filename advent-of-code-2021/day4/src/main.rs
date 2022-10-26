@@ -33,7 +33,7 @@ impl BingoCardField {
 }
 
 impl Display for BingoCardField {
-    fn fmt(&self, _: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let repr = match self.crossed {
             true => String::from("X"),
             false => self.number.to_string()
