@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::fs;
 
 fn main() {
@@ -29,16 +28,16 @@ impl DiagnosticsReportLine {
         return DiagnosticsReportLine{data}
     }
 
-    fn get(self: Self, i: usize) -> i8 {
+    fn get(self, i: usize) -> i8 {
         return self.data[i];
     }
  }
 
 impl DiagnosticReport {
     fn new(data: Vec<String>) -> Self{
-        let data =
+        let data: Vec<DiagnosticsReportLine> =
             data.into_iter().map(|l| DiagnosticsReportLine::new(l)).collect();
-        let line_len: usize = data.map(|drl| drl.len()).collect().iter().max().unwrap();
+        let line_len: usize = *data.iter().map(|drl| drl.data.len()).collect::<Vec<usize>>().iter().max().unwrap();
         return DiagnosticReport{data, line_len}
     }
 }

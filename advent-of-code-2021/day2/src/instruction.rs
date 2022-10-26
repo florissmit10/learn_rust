@@ -1,4 +1,4 @@
-#[derive(PartialEq, Debug)]
+#[derive(Eq, PartialEq, Debug)]
 pub enum Direction {
     Forward,
     Down,
@@ -13,7 +13,7 @@ pub struct Instruction {
 
 impl Direction {
     fn new(input: &str) -> Self {
-        return match input {
+        match input {
             "forward" => Direction::Forward,
             "down" => Direction::Down,
             "up" => Direction::Up,
@@ -25,10 +25,10 @@ impl Direction {
 impl Instruction {
     pub fn new(input: &str) -> Self {
         let split: Vec<&str> = input.split_whitespace().collect();
-        return match split.len() {
-            2 => Instruction { direction: Direction::new(&split[0]), distance: split[1].parse().unwrap() },
+        match split.len() {
+            2 => Instruction { direction: Direction::new(split[0]), distance: split[1].parse().unwrap() },
             _ => panic!("Cant make Instruction from {input}"),
-        };
+        }
     }
 }
 

@@ -8,7 +8,7 @@ fn main() {
         fs::read_to_string("input.txt")
             .expect("Cannot read input.txt")
             .lines()
-            .map(|l| Instruction::new(l))
+            .map(Instruction::new)
             .collect::<Vec<Instruction>>();
 
     let mut pos_p1 = Position::new();
@@ -31,7 +31,7 @@ struct Position{
 
 impl Position {
     fn new() -> Self {
-        return Position{
+        Position{
             depth: 0,
             horizontal_position: 0,
             aim: 0,

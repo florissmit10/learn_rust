@@ -9,9 +9,9 @@ fn main() {
         fs::read_to_string("input.txt")
             .expect("Cannot read input.txt");
     let mut input_bound = input.split("\n\n");
-    let drawn_numbers: Vec<u16> = input_bound.next().unwrap().split(",").map(|c| c.parse::<u16>().unwrap()).collect();
+    let drawn_numbers: Vec<u16> = input_bound.next().unwrap().split(',').map(|c| c.parse::<u16>().unwrap()).collect();
     let bingo_cards: Vec<BingoCard> = input_bound
-        .map(|s| BingoCard::new(s)).collect();
+        .map(BingoCard::new).collect();
     let bingo_game = BingoGame { drawn_numbers, bingo_cards };
     let (winning_number, remaining_numbers) = bingo_game.run_game().unwrap();
     let winning_scores: Vec<u32> = remaining_numbers.iter().map(|n| u32::from(*n) * u32::from(winning_number)).collect();
@@ -64,7 +64,7 @@ impl Display for BingoCard {
 impl BingoCard {
     fn new(input: &str) -> Self {
         let numbers: Vec<Vec<BingoCardField>> =
-            input.split("\n").map(|s|
+            input.split('\n').map(|s|
                 s.split(' ').filter(|n| !n.is_empty())
                     .map(|n| BingoCardField {
                         number: n.trim().parse().unwrap(),
@@ -87,8 +87,7 @@ impl BingoCard {
     fn is_crossed(&self, x: usize, y: usize) -> Result<bool, &'static str> {
         self.numbers
             .get(y).ok_or("Cant find index {y}")?
-            .get(x).ok_or("Cant find index {x}")
-            .and_then(|bcf| Ok(bcf.crossed))
+            .get(x).ok_or("Cant find index {x}").map(|bcf| bcf.crossed)
     }
 
     fn has_bingo(&self) -> bool {
@@ -104,7 +103,7 @@ impl BingoCard {
         if self.has_diagonal_bingo(){
             return true;
         }
-        return false;
+        false
     }
 
     fn has_horizontal_bingo(&self) -> bool {
@@ -114,14 +113,14 @@ impl BingoCard {
     fn has_vertical_bingo(&self) -> bool {
         for i in 0..self.numbers.len(){
             let has_vertical_bingo: bool =
-                (&self.numbers).iter()
+                self.numbers.iter()
                     .map(|v| v.get(i).unwrap())
                     .all(|bcf| bcf.crossed);
             if has_vertical_bingo{
                 return true;
             }
         }
-        return false;
+        false
     }
 
     fn has_diagonal_bingo(&self) -> bool {
@@ -135,8 +134,8 @@ impl BingoCard {
         for i in 0..self.numbers.len(){
             has_bingo = has_bingo && self.numbers.get(i).unwrap().get(self.numbers.len()-1 - (i)).unwrap().crossed
         }
-        if has_bingo { return true; }
-        return false;
+        if has_bingo {  return true;}
+        false
     }
 
     fn get_sum_of_uncrossed_numbers(&self) -> u16 {
@@ -153,7 +152,7 @@ struct BingoGame {
 impl BingoGame {
     fn run_game(mut self) -> Option<(u16, Vec<u16>)> {
         for number in self.drawn_numbers{
-            for mut card in &mut self.bingo_cards {
+            for card in &mut self.bingo_cards {
                 card.cross(number);
             }
             if self.bingo_cards.iter().any(|c| c.has_bingo()){
@@ -161,7 +160,7 @@ impl BingoGame {
                 return Some((number, winner_scores));
             }
         }
-        return None;
+        None
     }
 }
 
