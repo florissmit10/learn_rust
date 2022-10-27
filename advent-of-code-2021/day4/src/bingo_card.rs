@@ -102,9 +102,9 @@ impl BingoCard {
             return true;
         }
 
-        if self.has_diagonal_bingo(){
-            return true;
-        }
+        //if self.has_diagonal_bingo(){
+        //    return true;
+       // }
         false
     }
 
