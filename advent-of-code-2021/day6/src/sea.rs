@@ -1,39 +1,31 @@
+use std::collections::HashMap;
 
-pub struct LanternFish {
-    pub reproduce_in_days: u32,
-}
-
-impl LanternFish {
-    fn proceed_day(&mut self) -> Option<LanternFish> {
-        match self.reproduce_in_days {
-            0 => {
-                self.reproduce_in_days = 6;
-                Some(LanternFish{reproduce_in_days: 8})
-            }
-            _ => {
-                self.reproduce_in_days -= 1;
-                None
-            }
-        }
-    }
-}
 
 pub struct Sea {
-    pub fish: Vec<LanternFish>
+    fish: HashMap<u8, u128>
 }
 
 impl Sea {
-    pub fn new(input: &str) -> Self{
-        let fish = input.split(',')
-            .map(|num| LanternFish{reproduce_in_days: num.parse().unwrap()} )
-            .collect();
+    pub fn new(input: Vec<u32>) -> Self{
+        let fish = input.iter()
+            .fold(HashMap::new(),|mut map, num|{
+                *map.entry(*num as u8).or_insert(0)+=1;
+                map
+            });
         Sea{fish}
     }
 
     fn proceed_day(&mut self) {
-        let new_fish =
-            self.fish.iter_mut().filter_map(|f|f.proceed_day()).collect::<Vec<_>>();
-        self.fish.extend(new_fish);
+        let mut next_generation: HashMap<u8, u128> = HashMap::new();
+        next_generation.insert(6, *self.fish.get(&0).unwrap_or(&0));
+        next_generation.insert(8, *self.fish.get(&0).unwrap_or(&0));
+
+        for age in 1..=8 {
+            let entry =(next_generation.entry(age-1)).or_insert(0);
+            *entry+= *self.fish.entry(age).or_insert(0);
+        }
+
+        self.fish = next_generation.clone()
     }
 
     pub fn proceed_days(&mut self, days: u32) {
@@ -41,80 +33,63 @@ impl Sea {
             self.proceed_day();
         }
     }
+
+    pub fn get_number_of_fish(&mut self) -> u128 {
+        self.fish.values().sum()
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_lantern_fish_proceed() {
-        let mut lantern_fish = LanternFish{ reproduce_in_days: 5};
-        let result = lantern_fish.proceed_day();
+    fn compare_sea(result: &Sea, expected: [u128; 9]) {
+        let mut expected_map: HashMap<u8, u128> = HashMap::new();
+        for i in 0..=8 {
+            expected_map.insert(i as u8, *expected.get(i as usize).unwrap());
+        }
 
-        assert!(result.is_none());
-        assert_eq!(lantern_fish.reproduce_in_days, 4)
-    }
+        assert_eq!(result.fish, expected_map);
 
-    #[test]
-    fn test_lantern_fish_proceed_zero() {
-        let mut lantern_fish = LanternFish{ reproduce_in_days: 1};
-        let result = lantern_fish.proceed_day();
-
-        assert!(result.is_none());
-        assert_eq!(lantern_fish.reproduce_in_days, 0)
-    }
-
-    #[test]
-    fn test_lantern_fish_proceed_new() {
-        let mut lantern_fish = LanternFish{ reproduce_in_days: 0};
-        let result = lantern_fish.proceed_day();
-
-        assert!(result.is_some());
-        assert_eq!(result.unwrap().reproduce_in_days, 8);
-        assert_eq!(lantern_fish.reproduce_in_days, 6)
     }
 
     #[test]
     fn test_new_sea() {
-        let input = "2,4,1";
+        let input = vec![0,1,2,3,4,5,6,7,8];
         let sea = Sea::new(input);
 
-        assert_eq!(sea.fish.iter().len(), 3);
-        assert_eq!(sea.fish.iter().map(|f| f.reproduce_in_days).collect::<Vec<_>>(), vec![2,4,1]);
+        compare_sea(&sea, [1,1,1,1,1,1,1,1,1]);
     }
+
+    #[test]
+    fn test_sea_new_fish() {
+        let input = vec![0];
+        let mut sea = Sea::new(input);
+        sea.proceed_day();
+
+        compare_sea(&sea, [0,0,0,0,0,0,1,0,1]);
+    }
+
 
     #[test]
     fn test_sea_proceed_day() {
-        let input = "2,4,0";
+        let input = vec![0,0,0,1,2,3,4,5,6,7,8];
         let mut sea = Sea::new(input);
-
         sea.proceed_day();
 
-        assert_eq!(sea.fish.iter().len(), 4);
-        assert_eq!(sea.fish.iter().map(|f| f.reproduce_in_days).collect::<Vec<_>>(), vec![1,3,6,8]);
-    }
-
-    #[test]
-    fn test_sea_proceed_day_twice() {
-        let input = "2,4,0";
-        let mut sea = Sea::new(input);
-
-        sea.proceed_day();
-        sea.proceed_day();
-
-        assert_eq!(sea.fish.iter().len(), 4);
-        assert_eq!(sea.fish.iter().map(|f| f.reproduce_in_days).collect::<Vec<_>>(), vec![0,2,5,7]);
+        compare_sea(&sea, [1,1,1,1,1,1,4,1,3]);
     }
 
     #[test]
     fn test_sea_proceed_days() {
-        let input = "2,4,0";
+        let input = vec![0,0,0,1,2,3,4,5,6,7,8];
         let mut sea = Sea::new(input);
-
-        sea.proceed_days(2);
-
-        assert_eq!(sea.fish.iter().len(), 4);
-        assert_eq!(sea.fish.iter().map(|f| f.reproduce_in_days).collect::<Vec<_>>(), vec![0,2,5,7]);
+        sea.proceed_day();
+        compare_sea(&sea, [1,1,1,1,1,1,4,1,3]);
+        sea.proceed_day();
+        compare_sea(&sea, [1,1,1,1,1,4,2,3,1]);
+        sea.proceed_day();
+        compare_sea(&sea, [1,1,1,1,4,2,4,1,1]);
     }
+
 }
