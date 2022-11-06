@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use itertools::Itertools;
+use crate::decoder::Decoder;
 
 pub struct Digit {
     pub signal: String,
@@ -35,14 +35,15 @@ impl Entry {
 }
 
 
-pub fn build_entries(input: &str) -> Vec<Entry> {
+pub fn build_entries(input: &str) -> Vec<(Decoder, Entry)> {
     input.lines()
         .filter_map(|line| {
-            let (_, digits): (&str, &str) = line.split('|').into_iter().next_tuple()?;
+            let (signals, digits): (&str, &str) = line.split('|').into_iter().next_tuple()?;
 
             let digit_patterns = build_digits(digits);
+            let signal_patterns= signals.split(' ').map(String::from).collect();
 
-            Some(Entry::new(digit_patterns))
+            Some((Decoder::new(signal_patterns),Entry::new(digit_patterns)))
         })
         .collect::<Vec<_>>()
 }
