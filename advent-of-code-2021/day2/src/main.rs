@@ -1,15 +1,11 @@
 use std::fs;
+use std::io::Error;
 
 mod instruction;
 use instruction::{Instruction, Direction};
 
 fn main() {
-    let input:Vec<Instruction> =
-        fs::read_to_string("input.txt")
-            .expect("Cannot read input.txt")
-            .lines()
-            .map(Instruction::new)
-            .collect::<Vec<Instruction>>();
+    let input =read_data().unwrap();
 
     let mut pos_p1 = Position::new();
     pos_p1.process_instructions_p1(&input);
@@ -20,6 +16,14 @@ fn main() {
     pos_p2.process_instructions_p2(&input);
 
     println!("Part 2: final depth * position{:?}", pos_p2.depth * pos_p2.horizontal_position);
+}
+
+fn read_data() -> Result<Vec<Instruction>, Error> {
+    let input = fs::read_to_string("input.txt")?
+        .lines()
+        .map(|s|Instruction::new(s))
+        .collect::<Vec<_>>();
+    Ok(input)
 }
 
 #[derive(Debug)]
@@ -148,9 +152,9 @@ mod tests {
         let mut pos = Position::new();
         let instruction = Instruction::new("down 4");
 
-        pos.process_instruction_p1(&instruction);
+        pos.process_instruction_p2(&instruction);
 
-        assert_eq!(pos.depth, -4);
+        assert_eq!(pos.depth, 4);
         assert_eq!(pos.horizontal_position, 0);
     }
 
@@ -160,9 +164,9 @@ mod tests {
         let mut pos = Position::new();
         let instructions = vec![Instruction::new("down 4"), Instruction::new("down 4"), Instruction::new("forward 4")];
 
-        pos.process_instructions_p1(&instructions);
+        pos.process_instructions_p2(&instructions);
 
-        assert_eq!(pos.depth, -8);
+        assert_eq!(pos.depth, 8);
         assert_eq!(pos.horizontal_position, 4);
     }
 
