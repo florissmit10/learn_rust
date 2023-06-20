@@ -6,7 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/employee-cli/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/guessing_game/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/minigrep/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/advent-of-code-2021/core/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/advent-of-code-2021/day1/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/advent-of-code-2021/day2/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/advent-of-code-2021/day3/src" isTestSource="false" />
@@ -18,12 +17,16 @@
       <sourceFolder url="file://$MODULE_DIR$/advent-of-code-2021/day9/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/advent-of-code-2022/day1/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/todo-actix/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/shuttle-launchpad/podcast-app/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/shuttle-launchpad/web-project/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/guessing_game/target" />
       <excludeFolder url="file://$MODULE_DIR$/employee-cli/target" />
       <excludeFolder url="file://$MODULE_DIR$/minigrep/target" />
       <excludeFolder url="file://$MODULE_DIR$/advent-of-code-2021/target" />
       <excludeFolder url="file://$MODULE_DIR$/advent-of-code-2022/target" />
       <excludeFolder url="file://$MODULE_DIR$/todo-actix/target" />
+      <excludeFolder url="file://$MODULE_DIR$/todo-fullstack/target" />
+      <excludeFolder url="file://$MODULE_DIR$/shuttle-launchpad/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
